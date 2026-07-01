@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { business } from '../config.js';
 
-export default function Layout({ children }) {
+export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-stone-200/70 bg-[#f4f2ec]/80 backdrop-blur sticky top-0 z-10">
@@ -15,7 +15,7 @@ export default function Layout({ children }) {
       </header>
 
       <main className="flex-1 mx-auto w-full max-w-5xl px-5 py-10 sm:py-16">
-        {children}
+        <Outlet />
       </main>
 
       <footer className="border-t border-stone-200/70 py-8">
