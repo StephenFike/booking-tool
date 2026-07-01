@@ -1,22 +1,31 @@
-import { useEffect, useState } from 'react';
-import { api } from './lib/api.js';
+import { Routes, Route, Link } from 'react-router-dom';
+import Layout from './components/Layout.jsx';
+import Home from './pages/Home.jsx';
+import Booking from './pages/Booking.jsx';
+import Confirm from './pages/Confirm.jsx';
+import Cancel from './pages/Cancel.jsx';
 
-// Placeholder shell. Routes and real pages are added in the UI build steps:
-//   Home/Services, Booking, Confirm, Cancel, Admin Login, Admin Dashboard, ...
 export default function App() {
-  const [health, setHealth] = useState('checking…');
-
-  useEffect(() => {
-    api
-      .get('/api/health')
-      .then((data) => setHealth(`${data.status} · db ${data.db}`))
-      .catch(() => setHealth('unreachable'));
-  }, []);
-
   return (
-    <main className="app-shell">
-      <h1>Booking Tool</h1>
-      <p>Skeleton is up. API health: {health}</p>
-    </main>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/book/:serviceId" element={<Booking />} />
+        <Route path="/confirm/:token" element={<Confirm />} />
+        <Route path="/cancel/:token" element={<Cancel />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Layout>
+  );
+}
+
+function NotFound() {
+  return (
+    <div className="text-center py-16">
+      <h1 className="text-2xl font-bold text-slate-900">Page not found</h1>
+      <Link to="/" className="mt-4 inline-block text-brand-600 hover:underline">
+        ← Back to services
+      </Link>
+    </div>
   );
 }
