@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DateTime } from 'luxon';
 import { api } from '../../lib/api.js';
 import { business } from '../../config.js';
 import { formatLongDate, formatTime } from '../../lib/format.js';
 import { cardCls, inputCls, labelCls, btnPrimary, btnSm, btnDangerSm, WEEKDAYS } from '../../lib/adminUi.js';
+import { listItem } from '../../lib/motion.js';
 import { Loading, ErrorState } from '../../components/ui.jsx';
 
 export default function AdminAvailability() {
@@ -170,26 +172,33 @@ function Blackouts({ blackouts, reload }) {
       <h2 className="font-display text-3xl font-medium text-stone-800">Blocked dates</h2>
       <p className="mt-1 text-stone-500">One-off holidays or breaks that override your weekly hours.</p>
 
-      <div className="mt-5 space-y-3">
+      <div className="mt-5">
         {blackouts.length === 0 ? (
           <p className="text-sm text-stone-400">No blocked dates.</p>
         ) : (
-          blackouts.map((b) => (
-            <div key={b.id} className={`${cardCls} flex items-center justify-between gap-4`}>
-              <div>
-                <p className="font-medium text-stone-800">
-                  {formatLongDate(b.startAt, business.timezone)}
-                </p>
-                <p className="text-sm text-stone-500">
-                  {formatTime(b.startAt, business.timezone)} – {formatTime(b.endAt, business.timezone)}
-                  {b.reason ? ` · ${b.reason}` : ''}
-                </p>
-              </div>
-              <button onClick={() => remove(b.id)} className={btnDangerSm}>
-                Remove
-              </button>
-            </div>
-          ))
+          <motion.ul layout className="flex flex-col gap-3">
+            <AnimatePresence initial={false}>
+              {blackouts.map((b) => (
+                <motion.li key={b.id} {...listItem}>
+                  <div className={`${cardCls} flex items-center justify-between gap-4`}>
+                    <div>
+                      <p className="font-medium text-stone-800">
+                        {formatLongDate(b.startAt, business.timezone)}
+                      </p>
+                      <p className="text-sm text-stone-500">
+                        {formatTime(b.startAt, business.timezone)} –{' '}
+                        {formatTime(b.endAt, business.timezone)}
+                        {b.reason ? ` · ${b.reason}` : ''}
+                      </p>
+                    </div>
+                    <button onClick={() => remove(b.id)} className={btnDangerSm}>
+                      Remove
+                    </button>
+                  </div>
+                </motion.li>
+              ))}
+            </AnimatePresence>
+          </motion.ul>
         )}
       </div>
 

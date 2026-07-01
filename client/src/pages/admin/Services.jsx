@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../../lib/api.js';
 import { formatPrice, formatDuration } from '../../lib/format.js';
 import { cardCls, inputCls, labelCls, btnPrimary, btnGhost, btnSm, btnDangerSm } from '../../lib/adminUi.js';
+import { listItem, collapse } from '../../lib/motion.js';
 import { Loading, ErrorState, EmptyState, Spinner } from '../../components/ui.jsx';
 
 export default function AdminServices() {
@@ -43,18 +45,22 @@ export default function AdminServices() {
         )}
       </div>
 
-      {editing && (
-        <div className="mt-5">
-          <ServiceForm
-            initial={editing === 'new' ? null : editing}
-            onCancel={() => setEditing(null)}
-            onSaved={() => {
-              setEditing(null);
-              load();
-            }}
-          />
-        </div>
-      )}
+      <AnimatePresence>
+        {editing && (
+          <motion.div key="form" {...collapse}>
+            <div className="mt-5">
+              <ServiceForm
+                initial={editing === 'new' ? null : editing}
+                onCancel={() => setEditing(null)}
+                onSaved={() => {
+                  setEditing(null);
+                  load();
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="mt-5">
         {state.status === 'loading' && <Loading label="Loading services…" />}
@@ -64,9 +70,11 @@ export default function AdminServices() {
         )}
 
         {state.status === 'ready' && state.rows.length > 0 && (
-          <div className="space-y-3">
+          <motion.ul layout className="flex flex-col gap-3">
+            <AnimatePresence initial={false}>
             {state.rows.map((s) => (
-              <div key={s.id} className={`${cardCls} flex items-center gap-4`}>
+              <motion.li key={s.id} {...listItem}>
+              <div className={`${cardCls} flex items-center gap-4`}>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-stone-800 truncate">{s.name}</p>
@@ -90,8 +98,10 @@ export default function AdminServices() {
                   </button>
                 </div>
               </div>
+              </motion.li>
             ))}
-          </div>
+            </AnimatePresence>
+          </motion.ul>
         )}
       </div>
     </div>

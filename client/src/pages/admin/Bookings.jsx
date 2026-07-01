@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../../lib/api.js';
 import { business } from '../../config.js';
 import { formatLongDate, formatTime } from '../../lib/format.js';
 import { cardCls, btnSm, btnDangerSm, statusBadge } from '../../lib/adminUi.js';
+import { listItem } from '../../lib/motion.js';
 import { Loading, ErrorState, EmptyState } from '../../components/ui.jsx';
 
 const SCOPES = [
@@ -67,9 +69,11 @@ export default function AdminBookings() {
         )}
 
         {state.status === 'ready' && state.rows.length > 0 && (
-          <div className="space-y-3">
+          <motion.ul layout className="flex flex-col gap-3">
+            <AnimatePresence initial={false}>
             {state.rows.map((b) => (
-              <div key={b.id} className={`${cardCls} flex flex-col sm:flex-row sm:items-center gap-4`}>
+              <motion.li key={b.id} {...listItem}>
+              <div className={`${cardCls} flex flex-col sm:flex-row sm:items-center gap-4`}>
                 <div className="sm:w-44 shrink-0">
                   <p className="font-medium text-stone-800">
                     {formatLongDate(b.start, business.timezone)}
@@ -129,8 +133,10 @@ export default function AdminBookings() {
                   </div>
                 )}
               </div>
+              </motion.li>
             ))}
-          </div>
+            </AnimatePresence>
+          </motion.ul>
         )}
       </div>
     </div>

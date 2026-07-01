@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { api } from '../lib/api.js';
 import { business } from '../config.js';
 import {
@@ -10,6 +11,7 @@ import {
   timeZoneLabel,
   todayInTimeZone,
 } from '../lib/format.js';
+import { collapse } from '../lib/motion.js';
 import { Loading, ErrorState } from '../components/ui.jsx';
 import SlotPicker from '../components/SlotPicker.jsx';
 import BookingForm from '../components/BookingForm.jsx';
@@ -142,8 +144,10 @@ export default function Booking() {
       </div>
 
       {/* Details form (appears once a slot is chosen) */}
-      {selected && (
-        <div className={`mt-6 ${cardClass}`}>
+      <AnimatePresence>
+        {selected && (
+          <motion.div key="details" {...collapse}>
+            <div className={`mt-6 ${cardClass}`}>
           <h2 className="font-display text-2xl font-medium text-stone-800">Your details</h2>
           <p className="mt-1.5 text-sm text-stone-500">
             {svc.name} on{' '}
@@ -162,8 +166,10 @@ export default function Booking() {
               serverError={submit.error}
             />
           </div>
-        </div>
-      )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

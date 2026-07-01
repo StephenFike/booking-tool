@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { api } from '../lib/api.js';
 import { business } from '../config.js';
 import { formatPrice, formatDuration } from '../lib/format.js';
+import { fadeUp } from '../lib/motion.js';
 import { Loading, ErrorState, EmptyState } from '../components/ui.jsx';
 
 export default function Home() {
@@ -48,8 +50,10 @@ export default function Home() {
 
         {state.status === 'ready' && state.services.length > 0 && (
           <div className="grid gap-5 sm:grid-cols-2">
-            {state.services.map((service) => (
-              <ServiceCard key={service.id} service={service} />
+            {state.services.map((service, i) => (
+              <motion.div key={service.id} {...fadeUp(i * 0.06)}>
+                <ServiceCard service={service} />
+              </motion.div>
             ))}
           </div>
         )}
