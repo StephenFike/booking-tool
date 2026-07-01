@@ -11,29 +11,36 @@ import { Loading, ErrorState } from '../../components/ui.jsx';
 export default function AdminAvailability() {
   const [state, setState] = useState({ status: 'loading', hours: [], blackouts: [], error: null });
 
-  function load() {
-    setState((s) => ({ ...s, status: 'loading', error: null }));
+  function load({ quiet = false } = {}) {
+    if (!quiet) setState((s) => ({ ...s, status: 'loading', error: null }));
     Promise.all([api.get('/api/admin/availability'), api.get('/api/admin/blackouts')])
       .then(([hours, blackouts]) => setState({ status: 'ready', hours, blackouts, error: null }))
       .catch((err) => setState({ status: 'error', hours: [], blackouts: [], error: err.message }));
   }
 
-  useEffect(load, []);
+  useEffect(() => {
+    load();
+  }, []);
+
+  const reload = () => load({ quiet: true });
+  const removeHour = (id) => setState((s) => ({ ...s, hours: s.hours.filter((h) => h.id !== id) }));
+  const removeBlackout = (id) =>
+    setState((s) => ({ ...s, blackouts: s.blackouts.filter((b) => b.id !== id) }));
 
   if (state.status === 'loading') return <Loading label="Loading hours…" />;
-  if (state.status === 'error') return <ErrorState message={state.error} onRetry={load} />;
+  if (state.status === 'error') return <ErrorState message={state.error} onRetry={() => load()} />;
 
   return (
     <div className="space-y-10">
-      <WeeklyHours hours={state.hours} reload={load} />
-      <Blackouts blackouts={state.blackouts} reload={load} />
+      <WeeklyHours hours={state.hours} reload={reload} onRemoved={removeHour} />
+      <Blackouts blackouts={state.blackouts} reload={reload} onRemoved={removeBlackout} />
     </div>
   );
 }
 
 /* ---------------- Weekly working hours ---------------- */
 
-function WeeklyHours({ hours, reload }) {
+function WeeklyHours({ hours, reload, onRemoved }) {
   const [weekday, setWeekday] = useState('1');
   const [start, setStart] = useState('09:00');
   const [end, setEnd] = useState('17:00');
@@ -61,7 +68,12 @@ function WeeklyHours({ hours, reload }) {
   }
 
   async function remove(id) {
-    await api.del(`/api/admin/availability/${id}`).then(reload).catch((e) => alert(e.message));
+    try {
+      await api.del(`/api/admin/availability/${id}`);
+      onRemoved(id);
+    } catch (e) {
+      alert(e.message);
+    }
   }
 
   return (
@@ -126,7 +138,7 @@ function WeeklyHours({ hours, reload }) {
 
 /* ---------------- One-off blackouts ---------------- */
 
-function Blackouts({ blackouts, reload }) {
+function Blackouts({ blackouts, reload, onRemoved }) {
   const [startLocal, setStartLocal] = useState('');
   const [endLocal, setEndLocal] = useState('');
   const [reason, setReason] = useState('');
@@ -164,7 +176,12 @@ function Blackouts({ blackouts, reload }) {
   }
 
   async function remove(id) {
-    await api.del(`/api/admin/blackouts/${id}`).then(reload).catch((e) => alert(e.message));
+    try {
+      await api.del(`/api/admin/blackouts/${id}`);
+      onRemoved(id);
+    } catch (e) {
+      alert(e.message);
+    }
   }
 
   return (

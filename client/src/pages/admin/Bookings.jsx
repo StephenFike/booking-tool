@@ -32,9 +32,18 @@ export default function AdminBookings() {
   async function act(id, action) {
     setBusyId(id);
     try {
-      await api.post(`/api/admin/bookings/${id}/${action}`);
+      const updated = await api.post(`/api/admin/bookings/${id}/${action}`);
       setConfirmCancelId(null);
-      load();
+      // Update local state (not a full reload) so AnimatePresence can animate
+      // the row out. In the "upcoming" view the row no longer belongs, so it
+      // leaves; in other views we just update its status badge in place.
+      setState((s) => ({
+        ...s,
+        rows:
+          scope === 'upcoming'
+            ? s.rows.filter((r) => r.id !== id)
+            : s.rows.map((r) => (r.id === id ? { ...r, status: updated.status } : r)),
+      }));
     } catch (err) {
       alert(err.message);
     } finally {

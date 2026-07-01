@@ -11,22 +11,27 @@ export default function AdminServices() {
   const [editing, setEditing] = useState(null); // null | 'new' | serviceObject
   const [busyId, setBusyId] = useState(null);
 
-  function load() {
-    setState((s) => ({ ...s, status: 'loading', error: null }));
+  // quiet=true refreshes data without flipping to the loading state (which
+  // would unmount the list and skip animations).
+  function load({ quiet = false } = {}) {
+    if (!quiet) setState((s) => ({ ...s, status: 'loading', error: null }));
     api
       .get('/api/admin/services')
       .then((rows) => setState({ status: 'ready', rows, error: null }))
       .catch((err) => setState({ status: 'error', rows: [], error: err.message }));
   }
 
-  useEffect(load, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   async function remove(id) {
     if (!confirm('Delete this service? This cannot be undone.')) return;
     setBusyId(id);
     try {
       await api.del(`/api/admin/services/${id}`);
-      load();
+      // Remove locally so the row animates out via AnimatePresence.
+      setState((s) => ({ ...s, rows: s.rows.filter((r) => r.id !== id) }));
     } catch (err) {
       alert(err.message);
     } finally {
@@ -54,7 +59,7 @@ export default function AdminServices() {
                 onCancel={() => setEditing(null)}
                 onSaved={() => {
                   setEditing(null);
-                  load();
+                  load({ quiet: true });
                 }}
               />
             </div>
