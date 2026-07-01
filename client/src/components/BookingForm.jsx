@@ -38,7 +38,7 @@ export default function BookingForm({ onSubmit, submitting, serverError }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="space-y-5">
       <Field label="Name" required error={touched.name && errors.name}>
         <input
           type="text"
@@ -85,7 +85,7 @@ export default function BookingForm({ onSubmit, submitting, serverError }) {
       </Field>
 
       {serverError && (
-        <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        <p className="rounded-xl bg-clay-400/10 border border-clay-400/40 px-4 py-2.5 text-sm text-stone-700">
           {serverError}
         </p>
       )}
@@ -93,7 +93,7 @@ export default function BookingForm({ onSubmit, submitting, serverError }) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white transition-colors hover:bg-brand-700 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 rounded-full bg-brand-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-brand-700 disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {submitting && <Spinner className="h-4 w-4 text-white" />}
         {submitting ? 'Confirming…' : 'Confirm booking'}
@@ -105,23 +105,23 @@ export default function BookingForm({ onSubmit, submitting, serverError }) {
 function Field({ label, required, hint, error, children }) {
   return (
     <label className="block">
-      <span className="text-sm font-medium text-slate-700">
+      <span className="text-sm font-semibold text-stone-700">
         {label}
-        {required && <span className="text-red-500"> *</span>}
-        {hint && <span className="text-slate-400 font-normal"> ({hint})</span>}
+        {required && <span className="text-clay-600"> *</span>}
+        {hint && <span className="text-stone-400 font-normal"> ({hint})</span>}
       </span>
-      <div className="mt-1">{children}</div>
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      <div className="mt-1.5">{children}</div>
+      {error && <p className="mt-1.5 text-sm text-clay-600">{error}</p>}
     </label>
   );
 }
 
 function inputClass(hasError) {
   return (
-    'block w-full rounded-lg border px-3 py-2 text-slate-900 shadow-sm outline-none transition-colors ' +
-    'focus:ring-2 focus:ring-brand-200 ' +
+    'block w-full rounded-xl border bg-stone-50/50 px-4 py-2.5 text-stone-800 outline-none transition-colors ' +
+    'placeholder:text-stone-400 focus:bg-white focus:ring-4 focus:ring-brand-100 ' +
     (hasError
-      ? 'border-red-400 focus:border-red-500'
-      : 'border-slate-300 focus:border-brand-500')
+      ? 'border-clay-500 focus:border-clay-500'
+      : 'border-stone-200 focus:border-brand-500')
   );
 }

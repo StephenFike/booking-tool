@@ -21,16 +21,22 @@ export default function Home() {
   return (
     <div>
       <section className="text-center max-w-2xl mx-auto">
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-slate-900">
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-clay-600">
+          Book with us
+        </p>
+        <h1 className="mt-4 font-display text-5xl sm:text-6xl font-medium tracking-tight text-stone-800 leading-[1.05]">
           {business.tagline}
         </h1>
-        <p className="mt-4 text-lg text-slate-600">{business.blurb}</p>
+        <p className="mt-5 text-lg text-stone-500 leading-relaxed">{business.blurb}</p>
       </section>
 
-      <section className="mt-12">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500 mb-4">
-          Choose a service
-        </h2>
+      <section className="mt-16">
+        <div className="flex items-center gap-4 mb-6">
+          <h2 className="font-sans text-xs font-semibold uppercase tracking-[0.2em] text-stone-400">
+            Choose a service
+          </h2>
+          <span className="h-px flex-1 bg-stone-200" />
+        </div>
 
         {state.status === 'loading' && <Loading label="Loading services…" />}
         {state.status === 'error' && <ErrorState message={state.error} onRetry={load} />}
@@ -41,7 +47,7 @@ export default function Home() {
         )}
 
         {state.status === 'ready' && state.services.length > 0 && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             {state.services.map((service) => (
               <ServiceCard key={service.id} service={service} />
             ))}
@@ -56,22 +62,24 @@ function ServiceCard({ service }) {
   return (
     <Link
       to={`/book/${service.id}`}
-      className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:shadow-md hover:border-brand-300"
+      className="group relative flex flex-col rounded-3xl border border-stone-200/80 bg-white p-7 shadow-[0_1px_2px_rgba(60,50,40,0.04)] transition-all duration-300 hover:shadow-[0_8px_30px_rgba(60,50,40,0.08)] hover:-translate-y-0.5"
     >
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-brand-700">
+        <h3 className="font-display text-2xl font-medium text-stone-800 group-hover:text-brand-700 transition-colors">
           {service.name}
         </h3>
-        <span className="shrink-0 rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700">
+        <span className="shrink-0 text-sm font-semibold text-clay-600">
           {formatPrice(service.priceCents)}
         </span>
       </div>
       {service.description && (
-        <p className="mt-2 text-sm text-slate-600 flex-1">{service.description}</p>
+        <p className="mt-2 text-sm text-stone-500 leading-relaxed flex-1">{service.description}</p>
       )}
-      <div className="mt-4 flex items-center justify-between">
-        <span className="text-sm text-slate-500">{formatDuration(service.durationMin)}</span>
-        <span className="text-sm font-medium text-brand-600 group-hover:translate-x-0.5 transition-transform">
+      <div className="mt-6 flex items-center justify-between border-t border-stone-100 pt-4">
+        <span className="text-xs uppercase tracking-wider text-stone-400">
+          {formatDuration(service.durationMin)}
+        </span>
+        <span className="text-sm font-semibold text-brand-600 group-hover:translate-x-1 transition-transform">
           Book →
         </span>
       </div>

@@ -22,6 +22,9 @@ availabilityRouter.get(
     const { serviceId, date } = validate(querySchema, req.query);
     const tz = env.businessTimezone;
 
+    // Availability changes with every booking — never let it be cached.
+    res.set('Cache-Control', 'no-store');
+
     const day = DateTime.fromISO(date, { zone: tz });
     if (!day.isValid) throw new ApiError(400, 'Invalid date');
 

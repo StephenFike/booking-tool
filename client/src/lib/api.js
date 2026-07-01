@@ -4,6 +4,8 @@ async function request(method, path, body) {
   const res = await fetch(path, {
     method,
     credentials: 'include',
+    // Never serve stale data (e.g. availability right after a booking).
+    cache: 'no-store',
     headers: body ? { 'Content-Type': 'application/json' } : undefined,
     body: body ? JSON.stringify(body) : undefined,
   });

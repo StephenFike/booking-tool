@@ -21,9 +21,9 @@ export default function App() {
 
 function NotFound() {
   return (
-    <div className="text-center py-16">
-      <h1 className="text-2xl font-bold text-slate-900">Page not found</h1>
-      <Link to="/" className="mt-4 inline-block text-brand-600 hover:underline">
+    <div className="text-center py-20">
+      <h1 className="font-display text-4xl font-medium text-stone-800">Page not found</h1>
+      <Link to="/" className="mt-4 inline-block text-brand-700 hover:underline">
         ← Back to services
       </Link>
     </div>

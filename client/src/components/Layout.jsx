@@ -4,26 +4,25 @@ import { business } from '../config.js';
 export default function Layout({ children }) {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-10">
-        <div className="mx-auto max-w-5xl px-4 h-16 flex items-center">
-          <Link to="/" className="flex items-center gap-2 group">
-            <span className="grid place-items-center h-8 w-8 rounded-lg bg-brand-600 text-white font-bold">
-              {business.name.charAt(0)}
-            </span>
-            <span className="font-semibold text-slate-900 group-hover:text-brand-700 transition-colors">
+      <header className="border-b border-stone-200/70 bg-[#f4f2ec]/80 backdrop-blur sticky top-0 z-10">
+        <div className="mx-auto max-w-5xl px-5 h-18 flex items-center py-5">
+          <Link to="/" className="group flex items-baseline gap-2">
+            <span className="font-display text-2xl font-semibold text-stone-800 group-hover:text-brand-700 transition-colors">
               {business.name}
             </span>
           </Link>
         </div>
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-5xl px-4 py-8 sm:py-12">
+      <main className="flex-1 mx-auto w-full max-w-5xl px-5 py-10 sm:py-16">
         {children}
       </main>
 
-      <footer className="border-t border-slate-200 py-6">
-        <div className="mx-auto max-w-5xl px-4 text-sm text-slate-400">
-          {business.name} · Demo booking app
+      <footer className="border-t border-stone-200/70 py-8">
+        <div className="mx-auto max-w-5xl px-5 text-sm text-stone-400">
+          <span className="font-display text-base text-stone-500">{business.name}</span>
+          <span className="mx-2 text-stone-300">·</span>
+          Demo booking app
         </div>
       </footer>
     </div>

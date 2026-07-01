@@ -47,10 +47,10 @@ async function seed() {
 
     // --- Services -----------------------------------------------------------
     const services = [
-      ['Consultation', 'A 30-minute intro call to scope your needs.', 30, 0],
-      ['Standard Session', 'A focused 60-minute working session.', 60, 8000],
-      ['Extended Session', 'A deep-dive 90-minute session.', 90, 11000],
-      ['Follow-up', 'A 45-minute check-in for existing clients.', 45, 6000],
+      ['Consultation', 'A complimentary 30-minute intro call to scope your needs.', 30, 0],
+      ['Follow-up', 'A 45-minute check-in for existing clients.', 45, 6500],
+      ['Standard Session', 'A focused 60-minute working session.', 60, 9500],
+      ['Extended Session', 'A deep-dive 90-minute session.', 90, 14000],
     ];
     const serviceIds = [];
     for (const [name, description, durationMin, priceCents] of services) {

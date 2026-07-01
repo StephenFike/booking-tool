@@ -14,6 +14,9 @@ import { Loading, ErrorState } from '../components/ui.jsx';
 import SlotPicker from '../components/SlotPicker.jsx';
 import BookingForm from '../components/BookingForm.jsx';
 
+const cardClass =
+  'rounded-3xl border border-stone-200/80 bg-white p-7 shadow-[0_1px_2px_rgba(60,50,40,0.04)]';
+
 export default function Booking() {
   const { serviceId } = useParams();
   const navigate = useNavigate();
@@ -73,7 +76,7 @@ export default function Booking() {
       <div className="max-w-lg mx-auto">
         <ErrorState message={service.error} onRetry={loadService} />
         <div className="mt-4 text-center">
-          <Link to="/" className="text-brand-600 hover:underline text-sm">
+          <Link to="/" className="text-brand-700 hover:underline text-sm">
             ← Back to services
           </Link>
         </div>
@@ -84,41 +87,43 @@ export default function Booking() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Link to="/" className="text-sm text-slate-500 hover:text-brand-700">
+      <Link to="/" className="text-sm text-stone-400 hover:text-brand-700 transition-colors">
         ← All services
       </Link>
 
       {/* Service header */}
-      <div className="mt-3 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className={`mt-4 ${cardClass}`}>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{svc.name}</h1>
-            {svc.description && <p className="mt-1 text-slate-600">{svc.description}</p>}
+            <h1 className="font-display text-3xl font-medium text-stone-800">{svc.name}</h1>
+            {svc.description && <p className="mt-1.5 text-stone-500 leading-relaxed">{svc.description}</p>}
           </div>
-          <span className="shrink-0 rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700">
+          <span className="shrink-0 text-base font-semibold text-clay-600">
             {formatPrice(svc.priceCents)}
           </span>
         </div>
-        <p className="mt-3 text-sm text-slate-500">{formatDuration(svc.durationMin)}</p>
+        <p className="mt-4 text-xs uppercase tracking-wider text-stone-400">
+          {formatDuration(svc.durationMin)}
+        </p>
       </div>
 
       {/* Date + slots */}
-      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className={`mt-6 ${cardClass}`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <h2 className="font-semibold text-slate-900">Pick a time</h2>
+          <h2 className="font-display text-2xl font-medium text-stone-800">Pick a time</h2>
           <label className="flex items-center gap-2 text-sm">
-            <span className="text-slate-500">Date</span>
+            <span className="text-stone-400">Date</span>
             <input
               type="date"
               value={date}
               min={todayInTimeZone(business.timezone)}
               onChange={(e) => setDate(e.target.value)}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-slate-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+              className="rounded-xl border border-stone-200 bg-stone-50/50 px-3 py-1.5 text-stone-800 outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-100"
             />
           </label>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-5">
           <SlotPicker
             status={avail.status}
             slots={avail.slots}
@@ -130,7 +135,7 @@ export default function Booking() {
           />
         </div>
         {avail.status === 'ready' && avail.slots.length > 0 && (
-          <p className="mt-3 text-xs text-slate-400">
+          <p className="mt-4 text-xs text-stone-400">
             Times shown in {timeZoneLabel(avail.slots[0], avail.timezone)}.
           </p>
         )}
@@ -138,19 +143,19 @@ export default function Booking() {
 
       {/* Details form (appears once a slot is chosen) */}
       {selected && (
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="font-semibold text-slate-900">Your details</h2>
-          <p className="mt-1 text-sm text-slate-600">
+        <div className={`mt-6 ${cardClass}`}>
+          <h2 className="font-display text-2xl font-medium text-stone-800">Your details</h2>
+          <p className="mt-1.5 text-sm text-stone-500">
             {svc.name} on{' '}
-            <span className="font-medium text-slate-800">
+            <span className="font-semibold text-stone-700">
               {formatLongDate(selected, avail.timezone)}
             </span>{' '}
             at{' '}
-            <span className="font-medium text-slate-800">
+            <span className="font-semibold text-stone-700">
               {formatTime(selected, avail.timezone)}
             </span>
           </p>
-          <div className="mt-4">
+          <div className="mt-5">
             <BookingForm
               onSubmit={handleSubmit}
               submitting={submit.pending}
