@@ -8,15 +8,26 @@
 
 import crypto from 'node:crypto';
 import bcrypt from 'bcryptjs';
+import { DateTime } from 'luxon';
 import { pool, withTransaction } from './pool.js';
 import { env } from '../config/env.js';
 
-/** Build a UTC Date `days` from today at the given hour:minute. */
-function upcoming(days, hour, minute = 0) {
-  const d = new Date();
-  d.setUTCDate(d.getUTCDate() + days);
-  d.setUTCHours(hour, minute, 0, 0);
-  return d;
+const TZ = env.businessTimezone;
+
+/** The next `count` weekdays (Mon–Fri), starting tomorrow, in the business tz. */
+function nextWeekdays(count) {
+  const days = [];
+  let d = DateTime.now().setZone(TZ).startOf('day').plus({ days: 1 });
+  while (days.length < count) {
+    if (d.weekday >= 1 && d.weekday <= 5) days.push(d); // 1=Mon … 5=Fri
+    d = d.plus({ days: 1 });
+  }
+  return days;
+}
+
+/** A UTC Date for the given local wall-clock time on `day` (a Luxon DateTime). */
+function atLocal(day, hour, minute = 0) {
+  return day.set({ hour, minute, second: 0, millisecond: 0 }).toUTC().toJSDate();
 }
 
 async function seed() {
@@ -60,17 +71,19 @@ async function seed() {
       );
     }
 
-    // --- A sample blackout (a two-hour break 3 days out) --------------------
+    const [day1, day2, day3] = nextWeekdays(3);
+
+    // --- A sample blackout (a midday break on the first weekday) ------------
     await client.query(
       'INSERT INTO blackouts (start_at, end_at, reason) VALUES ($1, $2, $3)',
-      [upcoming(3, 12), upcoming(3, 14), 'Team lunch']
+      [atLocal(day1, 12, 0), atLocal(day1, 14, 0), 'Team lunch']
     );
 
-    // --- A few upcoming confirmed bookings ----------------------------------
+    // --- A few upcoming confirmed bookings (local wall-clock times) ---------
     const sampleBookings = [
-      [serviceIds[0], 'Jordan Lee', 'jordan@example.com', '555-0101', upcoming(1, 9, 0), 30],
-      [serviceIds[1], 'Priya Shah', 'priya@example.com', '555-0102', upcoming(1, 13, 0), 60],
-      [serviceIds[2], 'Marco Diaz', 'marco@example.com', null, upcoming(2, 10, 0), 90],
+      [serviceIds[0], 'Jordan Lee', 'jordan@example.com', '555-0101', atLocal(day1, 10, 0), 30],
+      [serviceIds[1], 'Priya Shah', 'priya@example.com', '555-0102', atLocal(day2, 14, 0), 60],
+      [serviceIds[2], 'Marco Diaz', 'marco@example.com', null, atLocal(day3, 11, 30), 90],
     ];
     for (const [serviceId, name, email, phone, startAt, durationMin] of sampleBookings) {
       const endAt = new Date(startAt.getTime() + durationMin * 60_000);

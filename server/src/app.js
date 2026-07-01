@@ -3,6 +3,9 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env.js';
 import { pool } from './db/pool.js';
+import { servicesRouter } from './routes/services.routes.js';
+import { availabilityRouter } from './routes/availability.routes.js';
+import { bookingsRouter } from './routes/bookings.routes.js';
 
 export function createApp() {
   const app = express();
@@ -21,10 +24,12 @@ export function createApp() {
     }
   });
 
-  // Feature routes are mounted here as they are built:
-  //   app.use('/api/services', servicesRouter);
-  //   app.use('/api/availability', availabilityRouter);
-  //   app.use('/api/bookings', bookingsRouter);
+  // Public routes.
+  app.use('/api/services', servicesRouter);
+  app.use('/api/availability', availabilityRouter);
+  app.use('/api/bookings', bookingsRouter);
+
+  // Admin routes are mounted here as they are built:
   //   app.use('/api/auth', authRouter);
   //   app.use('/api/admin', requireAuth, adminRouter);
 
